@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: inventory-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ecommerce
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: inventory-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.org.inventory_service.event
+        spring.json.value.default.type: com.org.inventory_service.event.OrderCreatedEvent
+        spring.json.use.type.headers: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+server:
+  port: 8081
+
+# 1 hour
+jwt:
+  secret: ThisIsMyVerySecretKeyForJwtAuthentication123456
+  expiration: 3600000
